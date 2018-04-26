@@ -19,109 +19,106 @@ import javax.swing.JOptionPane;
  * @author kieranwilliams
  */
 public class MembersUI extends javax.swing.JFrame {
+
     //declaring fields of the class
     private String id;
     private String fn;
     private String ln;
     private String dob;
-    
+
     private String searchValue;
-    
-    
+
     //initalizes the fields of the class
-    private void initFields(){
+    private void initFields() {
         id = idTxt.getText();
         fn = fnTxt.getText();
         ln = lnTxt.getText();
-        dob = dobTxt.getText(); 
+        dob = dobTxt.getText();
     }
-    
+
     //validation methods
-    public boolean presenceCheck(String field){
+    public boolean presenceCheck(String field) {
         return !field.isEmpty();
     }
     //format check to be done
 //    public boolean formatCheck(String field){
 //    }
 //    
-    
-    
+
     //appends data to a text file comma sepperated
-    public boolean write(){
+    public boolean write() {
         try {
             System.out.println("write 1");
             FileWriter fw = new FileWriter("m.txt", true);
-            fw.write(id + "," + fn + "," + ln + "," + dob + System.getProperty("line.separator"));
+            fw.append(id + "," + fn + "," + ln + "," + dob + "\n");
+            fw.close();
             System.out.println("write 2");
             return true;
         } catch (IOException ex) {
             Logger.getLogger(MembersUI.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("write error");
             return false;
-        }   
+        }
     }
-    
+
     //reads from a text file from start to end to see if the search value == the first field in the record
-    public boolean search(String searchVal){
-        
+    public boolean search(String searchVal) {
+
         try {
             FileReader fr = new FileReader("m.txt");
             BufferedReader br = new BufferedReader(fr);
             String curLine;
             String[] lineArray = new String[4];
-            
-            while(!(curLine = br.readLine()).isEmpty()){
+
+            while (!(curLine = br.readLine()).isEmpty()) {
                 lineArray = curLine.split(",");
-                if(lineArray[0].equalsIgnoreCase(searchVal)){
-                    JOptionPane.showMessageDialog(null, "Member ID: " + lineArray[0] + " First Name: " + lineArray[1] 
-                            + " Last Name: " + lineArray[2] + " DOB: " + lineArray[3] 
-                            ,"Found User", JOptionPane.INFORMATION_MESSAGE);
-                }else{
+                if (lineArray[0].equalsIgnoreCase(searchVal)) {
+                    JOptionPane.showMessageDialog(null, "Member ID: " + lineArray[0] + " First Name: " + lineArray[1]
+                            + " Last Name: " + lineArray[2] + " DOB: " + lineArray[3],
+                             "Found User", JOptionPane.INFORMATION_MESSAGE);
+                } else {
                     JOptionPane.showMessageDialog(null, "User ID Not In Databse", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-            }            
+            }
+            br.close();
+            fr.close();
             return true;
-            
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MembersUI.class.getName()).log(Level.SEVERE, null, ex);
-           
+
         } catch (IOException ex) {
             Logger.getLogger(MembersUI.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
         return false;
     }
-    
-    
+
     //method preformed when the submit btn gets pressed
-    
-    public int submitter(){
-        
-        if(presenceCheck(idTxt.getText()) && presenceCheck(fnTxt.getText()) && presenceCheck(lnTxt.getText()) && presenceCheck(dobTxt.getText())){
+    public int submitter() {
+
+        if (presenceCheck(idTxt.getText()) && presenceCheck(fnTxt.getText()) && presenceCheck(lnTxt.getText()) && presenceCheck(dobTxt.getText())) {
             System.out.println("1");
             initFields();
-            if(write()){
+            if (write()) {
                 JOptionPane.showMessageDialog(null, "Contact Successfully Added", "Success", JOptionPane.INFORMATION_MESSAGE);
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(null, "Contact NOT Added", "Error", JOptionPane.ERROR_MESSAGE);
             }
-            
-        }else{
+
+        } else {
             System.out.println("2");
             return 0;
         }
         return 1;
     }
-    
+
     //method preformed when the user presses search btn
-    
-    public void searcher(){
-        if (presenceCheck(idSearchTxt.getText())){
+    public void searcher() {
+        if (presenceCheck(idSearchTxt.getText())) {
             searchValue = idSearchTxt.getText();
             search(searchValue);
         }
     }
-    
-    
 
     /**
      * Creates new form MemebersUI
