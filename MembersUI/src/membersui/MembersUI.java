@@ -10,6 +10,29 @@ package membersui;
  * @author kieranwilliams
  */
 public class MembersUI extends javax.swing.JFrame {
+    //declaring fields of the class
+    private String id;
+    private String fn;
+    private String ln;
+    private String dob;
+    
+    
+    //initalizes the fields of the class
+    private void initFields(){
+        id = idTxt.getText();
+        fn = fnTxt.getText();
+        ln = lnTxt.getText();
+        dob = dobTxt.getText();              
+    }
+    
+    //validation methods
+    public boolean presenceCheck(String field){
+        return !field.isEmpty();
+    }
+    //format check to be done
+//    public boolean formatCheck(String field){
+//    }
+//    
 
     /**
      * Creates new form MemebersUI
