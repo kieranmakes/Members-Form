@@ -5,6 +5,15 @@
  */
 package membersui;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author kieranwilliams
@@ -16,13 +25,15 @@ public class MembersUI extends javax.swing.JFrame {
     private String ln;
     private String dob;
     
+    private String searchValue;
+    
     
     //initalizes the fields of the class
     private void initFields(){
         id = idTxt.getText();
         fn = fnTxt.getText();
         ln = lnTxt.getText();
-        dob = dobTxt.getText();              
+        dob = dobTxt.getText(); 
     }
     
     //validation methods
@@ -33,6 +44,84 @@ public class MembersUI extends javax.swing.JFrame {
 //    public boolean formatCheck(String field){
 //    }
 //    
+    
+    
+    //appends data to a text file comma sepperated
+    public boolean write(){
+        try {
+            System.out.println("write 1");
+            FileWriter fw = new FileWriter("m.txt", true);
+            fw.write(id + "," + fn + "," + ln + "," + dob + System.getProperty("line.separator"));
+            System.out.println("write 2");
+            return true;
+        } catch (IOException ex) {
+            Logger.getLogger(MembersUI.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("write error");
+            return false;
+        }   
+    }
+    
+    //reads from a text file from start to end to see if the search value == the first field in the record
+    public boolean search(String searchVal){
+        
+        try {
+            FileReader fr = new FileReader("m.txt");
+            BufferedReader br = new BufferedReader(fr);
+            String curLine;
+            String[] lineArray = new String[4];
+            
+            while(!(curLine = br.readLine()).isEmpty()){
+                lineArray = curLine.split(",");
+                if(lineArray[0].equalsIgnoreCase(searchVal)){
+                    JOptionPane.showMessageDialog(null, "Member ID: " + lineArray[0] + " First Name: " + lineArray[1] 
+                            + " Last Name: " + lineArray[2] + " DOB: " + lineArray[3] 
+                            ,"Found User", JOptionPane.INFORMATION_MESSAGE);
+                }else{
+                    JOptionPane.showMessageDialog(null, "User ID Not In Databse", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }            
+            return true;
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MembersUI.class.getName()).log(Level.SEVERE, null, ex);
+           
+        } catch (IOException ex) {
+            Logger.getLogger(MembersUI.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        return false;
+    }
+    
+    
+    //method preformed when the submit btn gets pressed
+    
+    public int submitter(){
+        
+        if(presenceCheck(idTxt.getText()) && presenceCheck(fnTxt.getText()) && presenceCheck(lnTxt.getText()) && presenceCheck(dobTxt.getText())){
+            System.out.println("1");
+            initFields();
+            if(write()){
+                JOptionPane.showMessageDialog(null, "Contact Successfully Added", "Success", JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(null, "Contact NOT Added", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            
+        }else{
+            System.out.println("2");
+            return 0;
+        }
+        return 1;
+    }
+    
+    //method preformed when the user presses search btn
+    
+    public void searcher(){
+        if (presenceCheck(idSearchTxt.getText())){
+            searchValue = idSearchTxt.getText();
+            search(searchValue);
+        }
+    }
+    
+    
 
     /**
      * Creates new form MemebersUI
@@ -79,6 +168,11 @@ public class MembersUI extends javax.swing.JFrame {
         jLabel4.setText("Date Of Birth:");
 
         submitBtn.setText("Submit");
+        submitBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                submitBtnActionPerformed(evt);
+            }
+        });
 
         fnTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -153,6 +247,11 @@ public class MembersUI extends javax.swing.JFrame {
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Search"));
 
         searchBtn.setText("Search");
+        searchBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchBtnActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("Search By Member ID");
 
@@ -218,6 +317,14 @@ public class MembersUI extends javax.swing.JFrame {
     private void dobTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dobTxtActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_dobTxtActionPerformed
+
+    private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
+        submitter();
+    }//GEN-LAST:event_submitBtnActionPerformed
+
+    private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
+        searcher();
+    }//GEN-LAST:event_searchBtnActionPerformed
 
     /**
      * @param args the command line arguments
