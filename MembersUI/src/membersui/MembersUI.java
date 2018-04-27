@@ -40,19 +40,18 @@ public class MembersUI extends javax.swing.JFrame {
     public boolean presenceCheck(String field) {
         return !field.isEmpty();
     }
+
     //format check to be done
-//    public boolean formatCheck(String field){
-//    }
-//    
+    public boolean formatCheck(String field) {
+        return field.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})");
+    }
 
     //appends data to a text file comma sepperated
     public boolean write() {
         try {
-            System.out.println("write 1");
             FileWriter fw = new FileWriter("m.txt", true);
             fw.append(id + "," + fn + "," + ln + "," + dob + "\n");
             fw.close();
-            System.out.println("write 2");
             return true;
         } catch (IOException ex) {
             Logger.getLogger(MembersUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -75,7 +74,7 @@ public class MembersUI extends javax.swing.JFrame {
                 if (lineArray[0].equalsIgnoreCase(searchVal)) {
                     JOptionPane.showMessageDialog(null, "Member ID: " + lineArray[0] + " First Name: " + lineArray[1]
                             + " Last Name: " + lineArray[2] + " DOB: " + lineArray[3],
-                             "Found User", JOptionPane.INFORMATION_MESSAGE);
+                            "Found User", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(null, "User ID Not In Databse", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -94,22 +93,26 @@ public class MembersUI extends javax.swing.JFrame {
     }
 
     //method preformed when the submit btn gets pressed
-    public int submitter() {
+    public boolean submitter() {
 
         if (presenceCheck(idTxt.getText()) && presenceCheck(fnTxt.getText()) && presenceCheck(lnTxt.getText()) && presenceCheck(dobTxt.getText())) {
-            System.out.println("1");
-            initFields();
-            if (write()) {
-                JOptionPane.showMessageDialog(null, "Contact Successfully Added", "Success", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null, "Contact NOT Added", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            if (formatCheck(dobTxt.getText())) {
+                initFields();
 
+                if (write()) {
+                    JOptionPane.showMessageDialog(null, "Contact Successfully Added", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    return true;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Contact NOT Added", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Ensure DOB field is of format dd/mm/yyyy", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } else {
-            System.out.println("2");
-            return 0;
+            JOptionPane.showMessageDialog(null, "Ensure All Filed Are populated", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        return 1;
+        return false;
     }
 
     //method preformed when the user presses search btn
